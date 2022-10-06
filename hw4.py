@@ -1,8 +1,7 @@
-##### hw2 in functions #####
-
 import random  # импортирует модуль random
 import string  # импортирует модуль string
 
+# hw2
 # Функция создает список и заполняет его пустыми словарями
 def new_empty_list():
     lst = []  # объявляем пустой список
@@ -17,7 +16,6 @@ def fill_dct_in_list(t):
         for i in range(random.randint(2, 10)):  # цикл проходит по каждому значению словаря, создавая их в количестве от 2 до 10
             kn = {random.choice(string.ascii_lowercase):random.randint(1,100)}  # заполняем значение словаря случайной парой буква/число
             t[dct_n].update(kn)  # пара ключ/значение добавлятся в целевой словарь
-    print('Сгенерированный список словарей:', t)
     return t
 
 # Функция для создания списка, в который будут записаны и отсортировааны ключи
@@ -71,18 +69,10 @@ def final_list(a, b):
         fnl_lst.append(st_lst_t)  # добавляем значение в финальную переменную
         st_lst.clear() # очищаем список перед след циклом
     fnl_lst = dict(fnl_lst)  # переводим в словарь
-    print ('Словарь сформированный по заданию:', fnl_lst)  #выводим сформированный словарь на экран УРА
-
-lst = new_empty_list()  # Создание списка и заполнение его пустыми словарями
-glst = fill_dct_in_list(lst)  # Заполнение словарей в списке случайным количеством значений
-gks = keys_list(glst)  # Создание списка, в который будут записаны и отсортировааны ключи
-gks_n = keys_unique_list(gks)  # Удаление дубликатов из списка ключей
-final_list(lst, gks_n)  # Формирование финального словаря по условиям задачи
+    return fnl_lst
 
 
-
-##### hw3 in functions #####
-
+# hw3
 txt = '''homEwork:
   tHis iz your homeWork, copy these Text to variable.
 
@@ -108,13 +98,11 @@ def words_normalize_case(t):
             txt_n += txt_low[i].upper()
         else:
             txt_n += txt_low[i]  # Остальные слова добавляем без изменения
-    print (txt_n)
     return txt_n
 
 # Функция, которая заменяет iz на is
 def iz_to_is(t):
     txt_n_r = gtxt_n.replace(' iz', ' is')  # Заменяем iz на is если перед ним есть пробел
-    print('Текст в корректном виде: \n', txt_n_r)  # Выводим текст
     return txt_n_r
 
 # Функция, которая генерирует и добавяет доп текст
@@ -128,7 +116,6 @@ def add_sentence(t):
             lst1.append(i[:-1])  # тогда его записываем в отдельный список (без точки)
     txt_fnl = gtxt_n_r + '\n' + ' '.join(
         lst1) + '.'  # К основному тексту добавляем текст с последними словами каждого предложения
-    print('Текст в корректном виде с добавочным предложением: \n', txt_fnl)  # Выводим на экран
     return txt_fnl
 
 # Функция которая считает количество whitespace символов
@@ -137,10 +124,30 @@ def cnt_whitespases(t):
     for i in range(len(t)):  # Проходим по тексту и считаем кол-во whitespace символов
         if t[i] == ' ' or t[i] == '\n' or t[i] == '\t' or t[i] == '\v' or t[i] == '\r' or t[i] == '\f':
             cnt += 1
-    print('Количество whitespace символов в конечном тексте:', cnt)
+    return cnt
 
 
+
+
+
+##################
+###### main ######
+##################
+
+# hw2
+lst = new_empty_list()  # Создание списка и заполнение его пустыми словарями
+glst = fill_dct_in_list(lst)  # Заполнение словарей в списке случайным количеством значений
+print('Сгенерированный список словарей:', glst)
+gks = keys_list(glst)  # Создание списка, в который будут записаны и отсортировааны ключи
+gks_n = keys_unique_list(gks)  # Удаление дубликатов из списка ключей
+fnl_lst = final_list(lst, gks_n)  # Формирование финального словаря по условиям задачи
+print ('Словарь сформированный по заданию:', fnl_lst)  #выводим сформированный словарь на экран
+
+# hw3
 gtxt_n = words_normalize_case(txt)  # Нормализация букв с точки зрения регистра
 gtxt_n_r = iz_to_is(gtxt_n)  # Замена iz на is
+print('Текст в корректном виде: \n', gtxt_n_r)  # Выводим текст
 gtxt_fnl = add_sentence(gtxt_n_r)  # Добавление дополнительного предложения
-cnt_whitespases(gtxt_fnl)  # Подсчет whitespace символов
+print('Текст в корректном виде с добавочным предложением: \n', gtxt_fnl)  # Выводим на экран
+f_cnt = cnt_whitespases(gtxt_fnl)  # Подсчет whitespace символов
+print('Количество whitespace символов в конечном тексте:', f_cnt)
