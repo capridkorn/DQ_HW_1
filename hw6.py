@@ -2,6 +2,7 @@ from datetime import datetime, date  # Import 'datetime' module for working with
 import random  # Import 'random' module for random number generation
 import os  # Import 'os' module for working with system files
 import hw4  # Import methods from homework 4
+import hw7  # Import methods from homework 7
 
 
 # Class General where various methods are located
@@ -194,6 +195,21 @@ if __name__ == '__main__':
         fo.input_file_path()
         fo.read_file()
         fo.delete_file()
+    # hw7 part:
+    wct = hw7.WordCountToFile
+    wff = wct.words_from_file()
+    cw = wct.clear_words(wff)
+    cu = wct.count_unique(cw)
+    wct.write_to_file(cu)
+    lsf = hw7.LetterStatToFile
+    lff = lsf.letters_from_file()
+    cl = lsf.clear_letters(lff)
+    cuu = lsf.count_unique_upper(cl)
+    cua = lsf.count_unique_all(cl)
+    ca = lsf.count_all(cua)
+    lsf.write_to_file2(cua, cuu, ca)
+
+
 
 
 '''
