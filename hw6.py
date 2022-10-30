@@ -3,6 +3,7 @@ import random  # Import 'random' module for random number generation
 import os  # Import 'os' module for working with system files
 import hw4  # Import methods from homework 4
 import hw7  # Import methods from homework 7
+import hw8  # Import methods from homework 8
 
 
 # Class General where various methods are located
@@ -117,16 +118,19 @@ class Question(GeneralRecord):
         f.close()  # File closing
 
 
-# Class for reading records from the file
-class FileOperations:
+# Class for reading records from the file .txt
+class FileOperationsTxt:
     def __init__(self):
         self.f_path = ''
 
-    def input_file_path(self):  # Method for getting file path - standard or manually entered
+    def input_file_path(self, frmt):  # Method for getting file path - standard or manually entered
         path_option = int(input('Please select where file for reading is located?\n1 - Standard path\n2 - I want to '
                                 'enter path manually\nPlease enter selected option: '))
         if path_option == 1:
-            self.f_path = 'readfile.txt'  # File is located in the same folder as .py - only name could be mentioned
+            if frmt == 1:  # Option for .txt
+                self.f_path = 'readfile.txt'  # File is located in the same folder as .py - only name could be mentioned
+            elif frmt == 2:  # Option for .json
+                self.f_path = 'readfile.json'  # File is located in the same folder as .py - only name could be mentioned
         elif path_option == 2:
             self.f_path = input('Please enter file path: ')  # Full path should be entered
         return self.f_path
@@ -166,35 +170,43 @@ if __name__ == '__main__':
     n = News()
     pa = PrivateAd()
     q = Question()
-    fo = FileOperations()
+    fot = FileOperationsTxt()
+    foj = hw8.FileOperationsJson()
     print('Hello, dear editor. Please select how you want to add records:\n1 - Manually\n2 - Via File')
-    g.r_option()
-    if g.a == 1:
+    enter_method = g.r_option()
+    if enter_method == 1:
         print('Please select type of record you want to add:\n1 - News\n2 - Private Ad\n3 - Question of the day')
-        g.r_option()
-        if g.a == 1:
+        record_type = g.r_option()
+        if record_type == 1:
             txt = n.input_text()
             ct = n.input_city()
             dt = n.current_date()
             n.write_record(txt, ct, dt)
             n.thanks()
-        elif g.a == 2:
+        elif record_type == 2:
             txt = pa.input_text()
             dte = pa.date_insert()
             dt_to = pa.str_to_date(dte)
             dl = pa.day_left_calculation(dt_to)
             pa.write_record(txt, dt_to, dl)
             pa.thanks()
-        elif g.a == 3:
+        elif record_type == 3:
             txt = q.input_text()
             ans = q.input_answer()
             cmp = q.complexity()
             q.write_record(txt, ans, cmp)
             q.thanks()
-    elif g.a == 2:
-        fo.input_file_path()
-        fo.read_file()
-        fo.delete_file()
+    elif enter_method == 2:
+        print('Please select file format you want to use for data upload:\n1 - .txt\n2 - .json')
+        format = g.r_option()
+        if format == 1:
+            fot.input_file_path(format)
+            fot.read_file()
+            fot.delete_file()
+        elif format == 2:  # hw8
+            foj.input_file_path(format)
+            foj.read_file()
+            foj.delete_file()
     # hw7 part:
     wct = hw7.WordCountToFile
     wff = wct.words_from_file()
