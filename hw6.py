@@ -3,19 +3,13 @@ import random  # Import 'random' module for random number generation
 import os  # Import 'os' module for working with system files
 import hw4  # Import methods from homework 4
 import hw7  # Import methods from homework 7
-import hw8  # Import methods from homework 8
+import hw8_9  # Import methods from homework 8 and 9
 
 
 # Class General where various methods are located
 class General:
     def __init__(self):
         self.a = 0
-
-    # def p_greetings(self):  # Method for showing welcome inscription
-    #     print('Hello, dear editor. Please select how you want to add records:\n1 - Manually\n2 - Via File')
-    #
-    # def p_option_selection(self):
-    #     print('Please select type of record you want to add:\n1 - News\n2 - Advertisement\n3 - Question of the day')
 
     def r_option(self):  # Method for user's input
         self.a = int(input('Please enter selected option: '))
@@ -131,6 +125,8 @@ class FileOperationsTxt:
                 self.f_path = 'readfile.txt'  # File is located in the same folder as .py - only name could be mentioned
             elif frmt == 2:  # Option for .json
                 self.f_path = 'readfile.json'  # File is located in the same folder as .py - only name could be mentioned
+            elif frmt == 3:  # Option for .xml
+                self.f_path = 'readfile.xml'  # File is located in the same folder as .py - only name could be mentioned
         elif path_option == 2:
             self.f_path = input('Please enter file path: ')  # Full path should be entered
         return self.f_path
@@ -171,7 +167,7 @@ if __name__ == '__main__':
     pa = PrivateAd()
     q = Question()
     fot = FileOperationsTxt()
-    foj = hw8.FileOperationsJson()
+    foj = hw8_9.FileOperations()
     print('Hello, dear editor. Please select how you want to add records:\n1 - Manually\n2 - Via File')
     enter_method = g.r_option()
     if enter_method == 1:
@@ -197,7 +193,7 @@ if __name__ == '__main__':
             q.write_record(txt, ans, cmp)
             q.thanks()
     elif enter_method == 2:
-        print('Please select file format you want to use for data upload:\n1 - .txt\n2 - .json')
+        print('Please select file format you want to use for data upload:\n1 - .txt\n2 - .json\n3 - .xml')
         format = g.r_option()
         if format == 1:
             fot.input_file_path(format)
@@ -205,7 +201,11 @@ if __name__ == '__main__':
             fot.delete_file()
         elif format == 2:  # hw8
             foj.input_file_path(format)
-            foj.read_file()
+            foj.read_file_json()
+            foj.delete_file()
+        elif format == 3:  # hw9
+            foj.input_file_path(format)
+            foj.read_file_xml()
             foj.delete_file()
     # hw7 part:
     wct = hw7.WordCountToFile
@@ -220,18 +220,3 @@ if __name__ == '__main__':
     cua = lsf.count_unique_all(cl)
     ca = lsf.count_all(cua)
     lsf.write_to_file2(cua, cuu, ca)
-
-
-
-
-'''
-Список вопросов: 
-1.  В классе General были принты, которые лежали по отдельным методам строка 12-16 (сейчас закомментированы). 
-    Я их вынес в main. Корректно ли это?
-2.  В классе Genaral остался один метод. То есть как будто класс ради класса. 
-    Но в другие классы его вроде как нелогично добавлять по смыслу. Что с ним делать в таком случае? 
-3.  Основной мой вопрос заключается в том, что я по сути ни в одном классе могу не использовать init секцию, 
-    так как ничего не передаю в класс. И питон мне подсказывает, что все методы нужно сделать статическими. 
-    Как то это все выглядит не так как нужно :(
-4.  Oк ли вызывать методы из другого класса? Или тоже ужно это как-то по другому обыгрывать? например, строка 143
-'''
