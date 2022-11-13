@@ -4,7 +4,8 @@ import os  # Import 'os' module for working with system files
 import hw4  # Import methods from homework 4
 import hw7  # Import methods from homework 7
 import hw8_9  # Import methods from homework 8 and 9
-import sqlite3
+#import sqlite3
+import pyodbc
 
 
 # Class General where various methods are located
@@ -227,7 +228,8 @@ class FileOperationsTxt:
 
 
 if __name__ == '__main__':
-    con = sqlite3.connect('results.db')  # Connection to the database
+    # con = sqlite3.connect('results.db')  # Connection to the database
+    con = pyodbc.connect('Driver={SQLite3 ODBC Driver};SERVER=localhost;Database=results.db;Trusted_connection=yes')
     g = General()
     gr = GeneralRecord()
     n = News()
