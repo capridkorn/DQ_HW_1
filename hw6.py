@@ -4,6 +4,7 @@ import os  # Import 'os' module for working with system files
 import hw4  # Import methods from homework 4
 import hw7  # Import methods from homework 7
 import hw8_9  # Import methods from homework 8 and 9
+import sqlite3
 
 
 # Class General where various methods are located
@@ -54,6 +55,26 @@ class News(GeneralRecord):
         f.write('----------------------------------------------------------------------\n\n')  # Write footer to file
         f.close()  # File closing
 
+    def write_record_db(self, rec_txt, city, today, connection):  # hw10 Method for writing News record to the database
+        cursor = connection.cursor()
+        cursor.execute('create table if not exists News(Text, City, Current_Date)')
+        cursor.execute("insert into News values ('"+rec_txt+"', '"+city+"', '"+today+"')")
+        cursor.execute("select count(0) from News")
+        n = cursor.fetchall()
+        num = int(n[0][0])
+        cursor.execute("select * from News")
+        tbl = cursor.fetchall()
+        fl = True
+        for i in range(num-1):
+            if tbl[num-1] != tbl[i]:
+                continue
+            elif tbl[num-1] == tbl[i]:
+                fl = False
+                break
+        if fl:
+            connection.commit()
+        cursor.close()
+
 
 # Class where methods for working with Private Ad records are located
 class PrivateAd(GeneralRecord):  # Class PrivateAd has parent class GeneralRecord
@@ -79,13 +100,34 @@ class PrivateAd(GeneralRecord):  # Class PrivateAd has parent class GeneralRecor
         return ds
 
     @staticmethod
-    def write_record(rec_txt, date_to, days_left):  # Method for writing News record to the file
+    def write_record(rec_txt, date_to, days_left):  # Method for writing Private Ad record to the file
         f = open("newsfeed.txt", "a")
         f.write('--- PRIVATE AD -------------------------------------------------------\n')  # Write header to the file
         f.write(rec_txt + '\n')  # Write main text of the News record to the file
         f.write('Actual until: ' + str(date_to) + ', ' + days_left + '\n')  # Write Date_to and number of days left
         f.write('----------------------------------------------------------------------\n\n')  # Write footer to file
         f.close()  # File closing
+
+    def write_record_db(self, rec_txt, date_to, days_left, connection):  # hw10 Method for writing Private Ad record to the database
+        cursor = connection.cursor()
+        cursor.execute('create table if not exists PrivateAd(Text, Actual_until, Days_left)')
+        date_to = date_to.strftime("%Y-%m-%d")
+        cursor.execute("insert into PrivateAd values ('"+rec_txt+"', '"+date_to+"', '"+days_left+"')")
+        cursor.execute("select count(0) from PrivateAd")
+        n = cursor.fetchall()
+        num = int(n[0][0])
+        cursor.execute("select * from PrivateAd")
+        tbl = cursor.fetchall()
+        fl = True
+        for i in range(num - 1):
+            if tbl[num - 1] != tbl[i]:
+                continue
+            elif tbl[num - 1] == tbl[i]:
+                fl = False
+                break
+        if fl:
+            connection.commit()
+        cursor.close()
 
 
 # Class where methods for working with Question records are located
@@ -102,7 +144,7 @@ class Question(GeneralRecord):
         return complexity
 
     @staticmethod
-    def write_record(rec_txt, ans_txt, complexity):  # Method for writing News record to the file
+    def write_record(rec_txt, ans_txt, complexity):  # Method for writing Questions record to the file
         f = open("newsfeed.txt", "a")
         f.write('--- QUESTION OF THE DAY ----------------------------------------------\n')  # Write header to the file
         f.write(rec_txt + '\n')  # Write main text of the News record to the file
@@ -110,6 +152,27 @@ class Question(GeneralRecord):
         f.write('Complexity of the question: ' + str(complexity) + '/5\n')  # Write complexity to the file
         f.write('----------------------------------------------------------------------\n\n')  # Write footer to file
         f.close()  # File closing
+
+    def write_record_db(self, rec_txt, ans_txt, complexity, connection):  # hw10 Method for writing Questions record to the database
+        cursor = connection.cursor()
+        complexity = str(complexity)
+        cursor.execute('create table if not exists QuestionOfTheDay(Text, Answer, Complexity)')
+        cursor.execute("insert into QuestionOfTheDay values ('"+rec_txt+"', '"+ans_txt+"', '"+complexity+"')")
+        cursor.execute("select count(0) from QuestionOfTheDay")
+        n = cursor.fetchall()
+        num = int(n[0][0])
+        cursor.execute("select * from QuestionOfTheDay")
+        tbl = cursor.fetchall()
+        fl = True
+        for i in range(num - 1):
+            if tbl[num - 1] != tbl[i]:
+                continue
+            elif tbl[num - 1] == tbl[i]:
+                fl = False
+                break
+        if fl:
+            connection.commit()
+        cursor.close()
 
 
 # Class for reading records from the file .txt
@@ -143,17 +206,20 @@ class FileOperationsTxt:
                     city = lst_line[2]  # City is taken from the part of the line
                     today = News().current_date()  # For taking current date we use already existing method
                     News().write_record(rec_txt, city, today)  # For writing record to the file we use existing method
+                    News().write_record_db(rec_txt, city, today, con)  # For writing record to db we use existing method
                 elif lst_line[0] == 'private ad':  # If type of record is 'Private Ad'
                     rec_txt = hw4.words_normalize_case(lst_line[1])  # Use imported function to normalize the text
                     date_str = lst_line[2]  # Date is taken from the part of the line
                     date_to = PrivateAd().str_to_date(date_str)  # For converting string to date we use existing method
                     days_left = PrivateAd().day_left_calculation(date_to)  # For calc days left we use existing method
+                    PrivateAd().write_record_db(rec_txt, date_to, days_left, con)  # For writing record to db existing method is used
                     PrivateAd().write_record(rec_txt, date_to, days_left)  # For writing record existing method is used
                 elif lst_line[0] == 'question of the day':  # If type of record is 'Question of the day'
                     rec_txt = hw4.words_normalize_case(lst_line[1])  # Use imported function to normalize the text
                     ans_txt = lst_line[2]  # Answer text is taken from the part of the line
                     complexity = Question().complexity()  # For random complexity we use existing method
                     Question().write_record(rec_txt, ans_txt, complexity)  # For writing record existing method is used
+                    Question().write_record_db(rec_txt, ans_txt, complexity, con)  # For writing record to db existing method is used
                 else:  # If file doesn't correspond to pattern
                     print('Error in input format')
                     break
@@ -161,6 +227,7 @@ class FileOperationsTxt:
 
 
 if __name__ == '__main__':
+    con = sqlite3.connect('results.db')  # Connection to the database
     g = General()
     gr = GeneralRecord()
     n = News()
@@ -178,6 +245,7 @@ if __name__ == '__main__':
             ct = n.input_city()
             dt = n.current_date()
             n.write_record(txt, ct, dt)
+            n.write_record_db(txt, ct, dt, con)
             n.thanks()
         elif record_type == 2:
             txt = pa.input_text()
@@ -185,12 +253,14 @@ if __name__ == '__main__':
             dt_to = pa.str_to_date(dte)
             dl = pa.day_left_calculation(dt_to)
             pa.write_record(txt, dt_to, dl)
+            pa.write_record_db(txt, dt_to, dl, con)
             pa.thanks()
         elif record_type == 3:
             txt = q.input_text()
             ans = q.input_answer()
             cmp = q.complexity()
             q.write_record(txt, ans, cmp)
+            q.write_record_db(txt, ans, cmp, con)
             q.thanks()
     elif enter_method == 2:
         print('Please select file format you want to use for data upload:\n1 - .txt\n2 - .json\n3 - .xml')
@@ -220,3 +290,4 @@ if __name__ == '__main__':
     cua = lsf.count_unique_all(cl)
     ca = lsf.count_all(cua)
     lsf.write_to_file2(cua, cuu, ca)
+    con.close()
